@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Số liệu Xử phạt</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-shield-alt"></i> HỆ THỐNG QUẢN LÝ SỐ LIỆU XỬ PHẠT</h1>
+            <p>NHẬP VÀ TRA CỨU SỐ LIỆU VI PHẠM</p>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab-btn active" data-tab="input">
+                <i class="fas fa-edit"></i> NHẬP SỐ LIỆU
+            </button>
+            <button class="tab-btn" data-tab="search">
+                <i class="fas fa-search"></i> TRA CỨU
+            </button>
+            <button class="tab-btn" data-tab="config">
+                <i class="fas fa-cog"></i> CẤU HÌNH
+            </button>
+        </nav>
+
+        <!-- Tab Nhập số liệu -->
+        <div id="input-tab" class="tab-content active">
+            <div class="form-container">
+                <h2><i class="fas fa-pen-square"></i> NHẬP THÔNG TIN KIỂM TRA VÀ VI PHẠM</h2>
+                <form id="violation-form">
+                    <!-- Thông tin cơ bản (A-O) -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-info-circle"></i> THÔNG TIN CƠ BẢN</h3>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="quarter"><i class="fas fa-calendar-alt"></i> Quý kiểm tra *</label>
+                                <select id="quarter" name="quarter" required>
+                                    <option value="">-- Chọn quý --</option>
+                                    <option value="Quý I-26">Quý I-26</option>
+                                    <option value="Quý II-26">Quý II-26</option>
+                                    <option value="Quý III-26">Quý III-26</option>
+                                    <option value="Quý IV-26">Quý IV-26</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="execution-date"><i class="fas fa-calendar-day"></i> Ngày thực hiện *</label>
+                                <input type="text" id="execution-date" name="execution-date" placeholder="dd/mm/yyyy"
+                                    required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="working-group"><i class="fas fa-users"></i> Tổ công tác *</label>
+                                <select id="working-group" name="working-group" required>
+                                    <option value="">-- Chọn tổ --</option>
+                                    <option value="Tổ 01">Tổ 01</option>
+                                    <option value="Tổ 02">Tổ 02</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="reporter"><i class="fas fa-user-edit"></i> Người báo cáo *</label>
+                                <select id="reporter" name="reporter" required onchange="handleReporterChange()">
+                                    <option value="">-- Chọn người báo cáo --</option>
+                                    <option value="Hùng">Hùng</option>
+                                    <option value="Quý">Quý</option>
+                                    <option value="Khác">Khác</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group" id="reporter-other-group" style="display: none;">
+                                <label for="reporter-other"><i class="fas fa-user-plus"></i> Tên người báo cáo Khác
+                                    *</label>
+                                <input type="text" id="reporter-other" name="reporter-other"
+                                    placeholder="Nhập tên người báo cáo">
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label for="specialized-topic"><i class="fas fa-tasks"></i> Thực hiện chuyên đề
+                                    *</label>
+                                <select id="specialized-topic" name="specialized-topic" required>
+                                    <option value="">-- Chọn chuyên đề --</option>
+                                    <option value="Chuyên đề vi phạm cồn">Chuyên đề vi phạm cồn</option>
+                                    <option value="Chuyên đề vi phạm về Giấy ĐK, Đăng kiểm phương tiện">Chuyên đề vi
+                                        phạm về Giấy ĐK, Đăng kiểm phương tiện</option>
+                                    <option value="Chuyên đề vi phạm về quá vạch dấu mớn nước">Chuyên đề vi phạm về quá
+                                        vạch dấu mớn nước</option>
+                                    <option value="Chuyên đề Vi phạm quy định về sử dụng giấy CNKNCM, CCCM">Chuyên đề Vi
+                                        phạm quy định về sử dụng giấy CNKNCM, CCCM</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="total-reports"><i class="fas fa-file-alt"></i> Tổng số biên bản được lập
+                                    *</label>
+                                <input type="number" id="total-reports" name="total-reports" min="0" value="0" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="reports-phong"><i class="fas fa-building"></i> Số biên bản Cấp Phòng</label>
+                                <input type="number" id="reports-phong" name="reports-phong" min="0" value="0">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="reports-thuy-doi"><i class="fas fa-ship"></i> Số biên bản Cấp Thủy
+                                    đội</label>
+                                <input type="number" id="reports-thuy-doi" name="reports-thuy-doi" min="0" value="0">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="ttks-shifts"><i class="fas fa-clock"></i> Số ca thực hiện TTKS</label>
+                                <input type="number" id="ttks-shifts" name="ttks-shifts" min="0" value="0">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="soldiers-participated"><i class="fas fa-user-shield"></i> Số lượt chiến sĩ
+                                    tham gia</label>
+                                <input type="number" id="soldiers-participated" name="soldiers-participated" min="0"
+                                    max="20" value="0">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="legal-propaganda"><i class="fas fa-bullhorn"></i> Số lượt tuyên truyền pháp
+                                    luật</label>
+                                <input type="number" id="legal-propaganda" name="legal-propaganda" min="0" value="0">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="vehicle-inspections"><i class="fas fa-search-location"></i> Số lượt kiểm tra
+                                    phương tiện</label>
+                                <input type="number" id="vehicle-inspections" name="vehicle-inspections" min="0"
+                                    value="0">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="reminder-cases"><i class="fas fa-exclamation-circle"></i> Số trường hợp
+                                    tuyên truyền, nhắc nhở</label>
+                                <input type="number" id="reminder-cases" name="reminder-cases" min="0" max="100"
+                                    value="0">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="alcohol-checks"><i class="fas fa-wine-glass-alt"></i> Số lượt kiểm tra
+                                    cồn</label>
+                                <input type="number" id="alcohol-checks" name="alcohol-checks" min="0" value="0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vi phạm Thủy Đoàn -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-anchor"></i> VI PHẠM CẤP THỦY ĐOÀN</h3>
+                        <div id="thuy-doan-violations-container">
+                            <p class="section-note"><i class="fas fa-info-circle"></i> Nếu không có vi phạm Thủy Đoàn,
+                                để trống hoặc nhập 0</p>
+                            <button type="button" id="add-thuy-doan-btn" class="btn btn-secondary btn-with-icon">
+                                <i class="fas fa-plus-circle"></i> THÊM VI PHẠM THỦY ĐOÀN
+                            </button>
+                            <div id="thuy-doan-violations-list"></div>
+                        </div>
+                    </div>
+
+                    <!-- Vi phạm Thủy Đội -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-ship"></i> VI PHẠM CẤP THỦY ĐỘI</h3>
+                        <div id="thuy-doi-violations-container">
+                            <p class="section-note"><i class="fas fa-info-circle"></i> Nếu không có vi phạm Thủy Đội, để
+                                trống hoặc nhập 0</p>
+                            <button type="button" id="add-thuy-doi-btn" class="btn btn-secondary btn-with-icon">
+                                <i class="fas fa-plus-circle"></i> THÊM VI PHẠM THỦY ĐỘI
+                            </button>
+                            <div id="thuy-doi-violations-list"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-with-icon btn-lg">
+                            <i class="fas fa-save"></i> LƯU SỐ LIỆU
+                        </button>
+                        <button type="reset" class="btn btn-secondary btn-with-icon btn-lg">
+                            <i class="fas fa-redo"></i> NHẬP LẠI
+                        </button>
+                    </div>
+                </form>
+
+                <div id="input-message" class="message"></div>
+            </div>
+        </div>
+
+        <!-- Tab Tra cứu -->
+        <div id="search-tab" class="tab-content">
+            <div class="search-container">
+                <h2><i class="fas fa-search"></i> TRA CỨU SỐ LIỆU</h2>
+
+                <div class="search-filters">
+                    <div class="form-group">
+                        <label for="search-start-date"><i class="fas fa-calendar-alt"></i> TỪ NGÀY</label>
+                        <input type="date" id="search-start-date" name="search-start-date">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="search-end-date"><i class="fas fa-calendar-alt"></i> ĐẾN NGÀY</label>
+                        <input type="date" id="search-end-date" name="search-end-date">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="search-working-group"><i class="fas fa-users"></i> TỔ CÔNG TÁC</label>
+                        <select id="search-working-group" name="search-working-group">
+                            <option value="">Tất cả</option>
+                            <option value="Tổ 01">Tổ 01</option>
+                            <option value="Tổ 02">Tổ 02</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-actions">
+                        <button type="button" id="search-btn" class="btn btn-primary btn-with-icon">
+                            <i class="fas fa-search"></i> TÌM KIẾM
+                        </button>
+                        <button type="button" id="reset-search-btn" class="btn btn-secondary btn-with-icon">
+                            <i class="fas fa-times"></i> ĐẶT LẠI
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sub-tabs cho tra cứu (Khôi phục theo yêu cầu) -->
+                <div class="search-subtabs">
+                    <button class="subtab-btn active" data-subtab="general"><i class="fas fa-list-alt"></i> TRA CỨU
+                        THÔNG TIN CHUNG</button>
+                    <button class="subtab-btn" data-subtab="violations"><i class="fas fa-exclamation-triangle"></i> TRA
+                        CỨU CHI TIẾT VI PHẠM</button>
+                </div>
+
+                <!-- Tra cứu thông tin chung -->
+                <div id="search-general" class="search-subcontent active result-general">
+                    <div id="general-summary" class="summary"></div>
+                    <div id="general-table-container" class="table-container"></div>
+                </div>
+
+                <!-- Tra cứu chi tiết vi phạm -->
+                <div id="search-violations" class="search-subcontent result-violations">
+                    <div id="violations-summary" class="summary"></div>
+                    <div id="violations-table-container" class="table-container"></div>
+                </div>
+
+                <div id="export-buttons" class="export-buttons" style="display: none;">
+                    <button type="button" id="export-excel-btn" class="btn btn-success btn-with-icon">
+                        <i class="fas fa-file-excel"></i> XUẤT EXCEL
+                    </button>
+                    <button type="button" id="export-csv-btn" class="btn btn-success btn-with-icon">
+                        <i class="fas fa-file-csv"></i> XUẤT CSV
+                    </button>
+                </div>
+
+                <div id="search-message" class="message"></div>
+            </div>
+        </div>
+
+        <!-- Tab Cấu hình -->
+        <div id="config-tab" class="tab-content">
+            <!-- Config Content Simplified -->
+            <div class="config-container">
+                <div class="config-header">
+                    <h2><i class="fas fa-cogs"></i> CẤU HÌNH HỆ THỐNG</h2>
+                    <p class="config-subtitle">QUẢN LÝ KẾT NỐI GOOGLE SHEETS</p>
+                </div>
+
+                <!-- Card 1: Form Cấu hình -->
+                <div class="config-form-card">
+                    <h3><i class="fas fa-sliders-h"></i> Thông tin kết nối</h3>
+
+                    <div class="form-group">
+                        <label for="sheet-id">GOOGLE SHEET ID</label>
+                        <input type="text" id="sheet-id" name="sheet-id" placeholder="Nhập ID trang tính của bạn">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sheet-name">TÊN SHEET (TAB)</label>
+                        <input type="text" id="sheet-name" name="sheet-name" value="Dữ liệu xử phạt"
+                            placeholder="Ví dụ: Dữ liệu xử phạt">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="script-url">WEB APP URL (APPS SCRIPT)</label>
+                        <input type="text" id="script-url" name="script-url"
+                            placeholder="https://script.google.com/macros/s/...">
+                    </div>
+
+                    <div class="form-actions" style="margin-top: 20px;">
+                        <button type="button" id="save-config-btn" class="btn btn-primary btn-with-icon">
+                            <i class="fas fa-save"></i> LƯU
+                        </button>
+                        <button type="button" id="test-connection-btn" class="btn btn-secondary btn-with-icon">
+                            <i class="fas fa-wifi"></i> KIỂM TRA
+                        </button>
+                    </div>
+
+                    <div id="config-message" class="status-message"></div>
+                </div>
+
+                <!-- Card 2: Hướng dẫn ngắn gọn -->
+                <!-- Card 2: Hướng dẫn ngắn gọn -->
+                <div class="instructions-card">
+                    <h3><i class="fas fa-info-circle"></i> Hướng dẫn nhanh</h3>
+                    <ul class="step-list">
+                        <li class="step-item">
+                            <span class="step-number">1</span>
+                            <div>
+                                <strong>Chuẩn bị Google Sheet:</strong>
+                                Tạo một Google Sheet mới. Vào Extensions > Apps Script.
+                            </div>
+                        </li>
+                        <li class="step-item">
+                            <span class="step-number">2</span>
+                            <div>
+                                <strong>Cài đặt Script:</strong>
+                                Copy toàn bộ code trong file <code>Code.gs</code> vào trình soạn thảo và Lưu lại.
+                            </div>
+                        </li>
+                        <li class="step-item">
+                            <span class="step-number">3</span>
+                            <div>
+                                <strong>Deploy:</strong>
+                                Nhấn <strong>Deploy</strong> > <strong>New deployment</strong>. Chọn loại là <strong>Web
+                                    App</strong>.
+                                <br>
+                                <em>Quan trọng:</em> Mục "Who has access" chọn <strong>"Anyone"</strong>.
+                            </div>
+                        </li>
+                        <li class="step-item">
+                            <span class="step-number">4</span>
+                            <div>
+                                <strong>Kết nối:</strong>
+                                Copy <strong>Sheet ID</strong> (trên thanh địa chỉ trình duyệt) và <strong>Web App
+                                    URL</strong> (sau khi Deploy) dán vào ô bên trên.
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+
+    <script src="form-handler.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
